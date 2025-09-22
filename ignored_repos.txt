@@ -1,0 +1,8 @@
+# Ignored Repositories
+# Add repository names (one per line) that should not be displayed on the portfolio
+# Lines starting with # are comments and will be ignored
+
+excel-to-tally-automation
+basic-password-manager
+ssh-cloudflared-setup
+JatinNirwann
