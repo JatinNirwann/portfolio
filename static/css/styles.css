@@ -465,33 +465,6 @@ section {
     background-color: var(--background-gray);
 }
 
-.projects-filter {
-    display: flex;
-    justify-content: center;
-    gap: var(--spacing-3);
-    margin-bottom: var(--spacing-12);
-    flex-wrap: wrap;
-}
-
-.filter-btn {
-    padding: var(--spacing-2) var(--spacing-4);
-    background-color: var(--background-white);
-    color: var(--text-secondary);
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    cursor: pointer;
-    transition: var(--transition-base);
-    font-weight: 500;
-    font-size: var(--font-size-sm);
-}
-
-.filter-btn.active,
-.filter-btn:hover {
-    background-color: var(--primary-color);
-    color: white;
-    border-color: var(--primary-color);
-}
-
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -1031,15 +1004,6 @@ section {
         width: 100%;
         justify-content: center;
         max-width: 280px;
-    }
-    
-    .projects-filter {
-        gap: var(--spacing-2);
-    }
-    
-    .filter-btn {
-        flex: 1;
-        min-width: 80px;
     }
     
     .skills-list {

@@ -29,15 +29,6 @@ class PortfolioApp {
             });
         }
 
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                filterButtons.forEach(b => b.classList.remove('active'));
-                e.target.classList.add('active');
-                this.filterProjects(e.target.dataset.filter);
-            });
-        });
-
         const refreshButton = document.getElementById('refresh-repos-btn');
         if (refreshButton) {
             refreshButton.addEventListener('click', () => {
@@ -177,10 +168,9 @@ class PortfolioApp {
         const status = repo.status || 'completed';
         const statusIcon = status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
         const statusColor = status === 'completed' ? '#10b981' : '#f59e0b';
-        const category = this.categorizeProject(repo.language, repo.topics);
 
         return `
-            <div class="project-card" data-category="${category}">
+            <div class="project-card">
                 <div class="project-header">
                     <h3 class="project-title">${repo.name}</h3>
                     <div class="project-stats">
@@ -209,37 +199,6 @@ class PortfolioApp {
                 </div>
             </div>
         `;
-    }
-
-    categorizeProject(language, topics) {
-        const webTechnologies = ['javascript', 'typescript', 'html', 'css', 'react', 'vue', 'angular', 'web', 'frontend', 'backend'];
-        const mobileTechnologies = ['react-native', 'flutter', 'swift', 'kotlin', 'android', 'ios', 'mobile'];
-        const aiTechnologies = ['python', 'machine-learning', 'ai', 'tensorflow', 'pytorch', 'data-science', 'ml'];
-
-        const allTech = [language?.toLowerCase(), ...topics.map(t => t.toLowerCase())].filter(Boolean);
-
-        if (allTech.some(tech => aiTechnologies.includes(tech))) return 'ai';
-        if (allTech.some(tech => mobileTechnologies.includes(tech))) return 'mobile';
-        if (allTech.some(tech => webTechnologies.includes(tech))) return 'web';
-        
-        return 'other';
-    }
-
-    filterProjects(filter) {
-        const projectCards = document.querySelectorAll('.project-card');
-        
-        projectCards.forEach(card => {
-            const category = card.dataset.category;
-            const shouldShow = filter === 'all' || category === filter;
-            
-            if (shouldShow) {
-                card.style.display = 'block';
-                setTimeout(() => card.classList.add('fade-in'), 50);
-            } else {
-                card.style.display = 'none';
-                card.classList.remove('fade-in');
-            }
-        });
     }
 
     showProjectError(message) {
