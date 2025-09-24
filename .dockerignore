@@ -8,3 +8,5 @@ __pycache__/
 .dockerignore
 README.md
 *.log
+repo.txt
+ignored_repos.txt
