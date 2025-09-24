@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import requests
 import os
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
@@ -27,7 +27,16 @@ def load_repos_from_file():
     try:
         if os.path.exists('repo.txt'):
             with open('repo.txt', 'r', encoding='utf-8') as f:
-                return json.load(f)
+                cache_data = json.load(f)
+            
+            if isinstance(cache_data, list):
+                print("Old cache format detected, will update to new format")
+                return cache_data
+            elif isinstance(cache_data, dict) and 'repos' in cache_data:
+                return cache_data['repos']
+            else:
+                print("Invalid cache format")
+                return None
         return None
     except Exception as e:
         print(f"Error loading repos from file: {e}")
@@ -35,11 +44,39 @@ def load_repos_from_file():
 
 def save_repos_to_file(repos_data):
     try:
+        cache_data = {
+            'timestamp': datetime.now().isoformat(),
+            'repos': repos_data
+        }
         with open('repo.txt', 'w', encoding='utf-8') as f:
-            json.dump(repos_data, f, indent=2, ensure_ascii=False)
-        print("Repositories saved to repo.txt")
+            json.dump(cache_data, f, indent=2, ensure_ascii=False)
+        print("Repositories saved to repo.txt with timestamp")
     except Exception as e:
         print(f"Error saving repos to file: {e}")
+
+def is_cache_stale():
+    try:
+        if not os.path.exists('repo.txt'):
+            return True
+        
+        with open('repo.txt', 'r', encoding='utf-8') as f:
+            cache_data = json.load(f)
+        
+        if 'timestamp' not in cache_data:
+            print("Cache missing timestamp, considering stale")
+            return True
+        
+        cache_time = datetime.fromisoformat(cache_data['timestamp'])
+        current_time = datetime.now()
+        time_diff = current_time - cache_time
+        
+        is_stale = time_diff > timedelta(hours=2)
+        print(f"Cache age: {time_diff}, stale: {is_stale}")
+        return is_stale
+        
+    except Exception as e:
+        print(f"Error checking cache staleness: {e}")
+        return True
 
 def get_readme_content(username, repo_name):
     try:
@@ -132,9 +169,10 @@ def index():
 def get_github_repos():
     try:
         cached_repos = load_repos_from_file()
+        cache_is_stale = is_cache_stale()
         
-        if cached_repos:
-            print("Loading repositories from repo.txt cache")
+        if cached_repos and not cache_is_stale:
+            print("Loading repositories from fresh cache")
             ignored_repos = load_ignored_repos()
             filtered_repos = [
                 repo for repo in cached_repos 
@@ -148,7 +186,11 @@ def get_github_repos():
                 'source': 'cache'
             })
         else:
-            print("repo.txt not found, fetching from GitHub API")
+            if cache_is_stale:
+                print("Cache is stale (>2 hours old), refreshing from GitHub API")
+            else:
+                print("repo.txt not found, fetching from GitHub API")
+                
             repos = fetch_github_repos()
             
             if repos:

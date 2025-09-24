@@ -27,6 +27,9 @@
                     <a href="#home" class="nav-link active">Home</a>
                 </li>
                 <li class="nav-item">
+                    <a href="#about" class="nav-link">About</a>
+                </li>
+                <li class="nav-item">
                     <a href="#projects" class="nav-link">Projects</a>
                 </li>
                 <li class="nav-item">
@@ -36,54 +39,169 @@
                     <a href="#contact" class="nav-link">Contact</a>
                 </li>
             </ul>
-            <div class="nav-toggle" id="nav-toggle">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
+                    <i class="fas fa-moon" id="theme-icon"></i>
+                </button>
+                <div class="nav-toggle" id="nav-toggle">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
             </div>
         </div>
     </nav>
 
     <section id="home" class="hero">
-        <div class="hero-background">
-            <div class="hero-particles"></div>
-            <div class="hero-glow"></div>
+        <div class="hero-illustrations">
+            <div class="floating-icon floating-icon-1">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <div class="floating-icon floating-icon-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                    <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" stroke-width="2"/>
+                    <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="floating-icon floating-icon-3">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                    <path d="M12 1V3M12 21V23M4.22 4.22L5.64 5.64M18.36 18.36L19.78 19.78M1 12H3M21 12H23M4.22 19.78L5.64 18.36M18.36 5.64L19.78 4.22" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="floating-icon floating-icon-4">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14.7 6.3A1 1 0 0 0 13 5H1A1 1 0 0 0 0 6V18A1 1 0 0 0 1 19H13A1 1 0 0 0 14.7 17.7L19 13.41A1 1 0 0 0 19 10.59L14.7 6.3Z" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="floating-icon floating-icon-5">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M9 19C-2 19 -2 5 9 5L15 5C26 5 26 19 15 19L9 19Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M15 9L9 15" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            <div class="floating-icon floating-icon-6">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                    <rect x="7" y="8" width="10" height="8" rx="2" ry="2" stroke="currentColor" stroke-width="2"/>
+                </svg>
+            </div>
+            
+            <div class="geometric-shape shape-1"></div>
+            <div class="geometric-shape shape-2"></div>
+            <div class="geometric-shape shape-3"></div>
+            
+            <div class="mouse-follower" id="mouseFollower"></div>
+            <div class="mouse-trail" id="mouseTrail1"></div>
+            <div class="mouse-trail" id="mouseTrail2"></div>
+            <div class="mouse-trail" id="mouseTrail3"></div>
         </div>
         <div class="container">
             <div class="hero-content">
                 <div class="hero-text">
                     <h1 class="hero-title">
-                        <span class="gradient-text">Jatin Nirwan</span>
+                        Hi, I'm <span class="highlight">Jatin Nirwan</span>
                     </h1>
-                <p class="hero-subtitle">Building ideas into reality</p>
-                <p class="hero-description">
-                    Python developer specializing in full-stack development, machine learning applications, 
-                    and automation. Passionate about cybersecurity, networking, and creating efficient solutions.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary">
-                        <span>View Projects</span>
-                        <i class="fas fa-arrow-right"></i>
-                    </a>
-                    <a href="#contact" class="btn btn-secondary">
-                        <span>Get in Touch</span>
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <div class="avatar-container">
-                    <div class="avatar-glow"></div>
-                    <div class="avatar">
-                        <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="Profile Picture" />
+                    <p class="hero-subtitle">Full-Stack Developer & Python Specialist</p>
+                    <p class="hero-description">
+                        Building innovative web applications and automation solutions. 
+                        Passionate about creating efficient, scalable, and user-friendly software.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="#projects" class="btn btn-primary">
+                            <span>View My Work</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        <a href="#about" class="btn btn-secondary">
+                            <span>About Me</span>
+                            <i class="fas fa-user"></i>
+                        </a>
                     </div>
                 </div>
-            </div>
+                <div class="hero-image">
+                    <div class="avatar-container">
+                        <div class="avatar">
+                            <img src="{{ url_for('static', filename='images/profile.svg') }}" alt="Profile Picture" />
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="scroll-indicator">
             <div class="scroll-arrow">
                 <i class="fas fa-chevron-down"></i>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-text">
+                    <div class="section-header">
+                        <h2 class="section-title gradient-text">About Me</h2>
+                        <p class="section-subtitle">Get to know the person behind the code</p>
+                    </div>
+                    <div class="about-description">
+                        <p>
+                            I'm a 3rd-year Computer Science student at JIIT with a passion for networking, 
+                            server management, and self-hosting. I love experimenting with servers, deployment, 
+                            and automation to make complex tech feel simple.
+                        </p>
+                        <p>
+                            I enjoy building one-command setups and working with cloud, Docker, and automation tools. 
+                            That said, I'll admit—I've got a legendary fear of CSS and frontend chaos, 
+                            which makes me lean even harder into backend magic.
+                        </p>
+                    </div>
+                </div>
+                <div class="about-visual">
+                    <div class="code-window">
+                        <div class="window-header">
+                            <div class="window-controls">
+                                <span class="control close"></span>
+                                <span class="control minimize"></span>
+                                <span class="control maximize"></span>
+                            </div>
+                            <div class="window-title">jatin_nirwan.py</div>
+                        </div>
+                        <div class="window-content">
+                            <div class="code-line">
+                                <span class="line-number">1</span>
+                                <span class="code-text"><span class="keyword">class</span> <span class="class-name">Developer</span>:</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">2</span>
+                                <span class="code-text">    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="keyword">self</span>):</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">3</span>
+                                <span class="code-text">        <span class="keyword">self</span>.name = <span class="string">"Jatin Nirwan"</span></span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">4</span>
+                                <span class="code-text">        <span class="keyword">self</span>.role = <span class="string">"Full-Stack Dev"</span></span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">5</span>
+                                <span class="code-text">        <span class="keyword">self</span>.education = <span class="string">"CS @ JIIT"</span></span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">6</span>
+                                <span class="code-text">        <span class="keyword">self</span>.fears = [<span class="string">"CSS chaos"</span>]</span>
+                            </div>
+                            <div class="code-line">
+                                <span class="line-number">7</span>
+                                <span class="code-text">        <span class="keyword">self</span>.loves = [<span class="string">"Backend"</span>, <span class="string">"Automation"</span>]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -100,13 +218,6 @@
                     <div class="loading-spinner"></div>
                     <p>Loading projects...</p>
                 </div>
-            </div>
-            
-            <div class="projects-cta">
-                <button id="refresh-repos-btn" class="btn btn-outline">
-                    <i class="fas fa-sync-alt"></i>
-                    <span>Refresh Repos</span>
-                </button>
             </div>
         </div>
     </section>
