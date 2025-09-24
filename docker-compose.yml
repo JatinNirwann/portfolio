@@ -8,8 +8,5 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=production
-    volumes:
-      - ./repo.txt:/app/repo.txt
-      - ./ignored_repos.txt:/app/ignored_repos.txt
     restart: unless-stopped
     container_name: portfolio-app
