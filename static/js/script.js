@@ -37,7 +37,6 @@ class PortfolioApp {
         
         window.addEventListener('scroll', () => {
             let current = '';
-            // Corrected to find sections by ID (which template.html has)
             const sections = document.querySelectorAll('section[id]');
             
             sections.forEach(section => {
@@ -52,7 +51,6 @@ class PortfolioApp {
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
-                // Check if the link's href matches the current section's ID
                 if (link.getAttribute('href') === `#${current}`) {
                     link.classList.add('active');
                 }
@@ -129,7 +127,6 @@ class PortfolioApp {
         const projectsHTML = repos.map(repo => this.createProjectCard(repo)).join('');
         projectsGrid.innerHTML = projectsHTML;
 
-        // Re-run scroll animations on the new elements
         if (this.scrollObserver) {
             projectsGrid.querySelectorAll('.scroll-animate').forEach(el => {
                 this.scrollObserver.observe(el);
@@ -137,9 +134,7 @@ class PortfolioApp {
         }
     }
 
-    /**
-     * UPDATED to match the new comic-panel style
-     */
+    
     createProjectCard(repo) {
         const languageColors = {
             'JavaScript': '#f7df1e',
@@ -162,12 +157,11 @@ class PortfolioApp {
         const language = repo.language || 'Other';
         const languageColor = languageColors[language] || '#6b7280';
         
-        const status = repo.status || 'completed'; // Assuming your API provides this
+        const status = repo.status || 'completed'; 
         const statusIcon = status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
         const statusColor = status === 'completed' ? '#10b981' : '#f59e0b';
         const statusText = status === 'completed' ? 'Completed' : 'Under Dev';
 
-        // Add random rotation like in the template
         const rotations = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2'];
         const rotation = rotations[Math.floor(Math.random() * rotations.length)];
 
@@ -191,9 +185,7 @@ class PortfolioApp {
         `;
     }
 
-    /**
-     * UPDATED to match the new comic-panel style
-     */
+    
     showProjectError(message) {
         const projectsGrid = document.getElementById('projects-grid');
         console.log('Showing project error:', message);
