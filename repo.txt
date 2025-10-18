@@ -1,25 +1,47 @@
 {
-  "timestamp": "2025-09-24T20:11:50.324246",
+  "timestamp": "2025-10-18T21:48:15.277230",
   "repos": [
     {
       "name": "Portal-Plus",
-      "description": "No description available",
+      "description": "Python-based monitoring system that automatically tracks JIIT student portal data (attendance, marks, notices) and sends alerts via Telegram.",
       "html_url": "https://github.com/JatinNirwann/Portal-Plus",
       "language": "Python",
       "stargazers_count": 1,
       "forks_count": 0,
-      "updated_at": "2025-09-18T14:11:28Z",
+      "updated_at": "2025-10-05T19:21:21Z",
+      "topics": [],
+      "status": "completed"
+    },
+    {
+      "name": "ip-scanner",
+      "description": "Python network scanner: discovers live hosts via ARP and scans open ports on targets. Multi-threaded toolkit for network reconnaissance and port enumeration",
+      "html_url": "https://github.com/JatinNirwann/ip-scanner",
+      "language": "Python",
+      "stargazers_count": 0,
+      "forks_count": 0,
+      "updated_at": "2025-09-24T15:55:16Z",
+      "topics": [],
+      "status": "completed"
+    },
+    {
+      "name": "File-Shrink",
+      "description": "A C++ Huffman compression utility with AES encryption, batch processing, and image optimization for lossless file compression.",
+      "html_url": "https://github.com/JatinNirwann/File-Shrink",
+      "language": "C++",
+      "stargazers_count": 0,
+      "forks_count": 0,
+      "updated_at": "2025-09-24T15:51:07Z",
       "topics": [],
       "status": "completed"
     },
     {
       "name": "minimal-webserver",
-      "description": "No description available",
+      "description": "A minimal HTTP web server written in C that serves static files",
       "html_url": "https://github.com/JatinNirwann/minimal-webserver",
       "language": "HTML",
       "stargazers_count": 0,
       "forks_count": 0,
-      "updated_at": "2025-09-22T14:04:15Z",
+      "updated_at": "2025-09-24T15:48:30Z",
       "topics": [],
       "status": "completed"
     },
@@ -46,17 +68,6 @@
       "status": "under dev"
     },
     {
-      "name": "File-Shrink",
-      "description": "No description available",
-      "html_url": "https://github.com/JatinNirwann/File-Shrink",
-      "language": "C++",
-      "stargazers_count": 0,
-      "forks_count": 0,
-      "updated_at": "2025-04-17T14:12:58Z",
-      "topics": [],
-      "status": "completed"
-    },
-    {
       "name": "sockettalk",
       "description": "basic chat room using sockets",
       "html_url": "https://github.com/JatinNirwann/sockettalk",
@@ -64,17 +75,6 @@
       "stargazers_count": 0,
       "forks_count": 0,
       "updated_at": "2025-03-25T06:39:29Z",
-      "topics": [],
-      "status": "completed"
-    },
-    {
-      "name": "ip-scanner",
-      "description": "No description available",
-      "html_url": "https://github.com/JatinNirwann/ip-scanner",
-      "language": "Python",
-      "stargazers_count": 0,
-      "forks_count": 0,
-      "updated_at": "2025-02-24T20:18:39Z",
       "topics": [],
       "status": "completed"
     },

@@ -1,55 +1,35 @@
 class PortfolioApp {
     constructor() {
+        this.scrollObserver = null;
         this.init();
     }
 
     init() {
         console.log('Portfolio app initializing...');
-        this.setupEventListeners();
+        this.initScrollAnimations();
         this.initNavbar();
         this.initSmoothScrolling();
-        this.initThemeToggle();
-        this.initInteractiveIllustrations();
         this.loadGitHubProjects();
         this.setupAutoRefresh();
     }
 
-    setupEventListeners() {
-        const navToggle = document.getElementById('nav-toggle');
-        const navMenu = document.getElementById('nav-menu');
-        
-        if (navToggle && navMenu) {
-            navToggle.addEventListener('click', () => {
-                navToggle.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
+    initScrollAnimations() {
+        const animatedElements = document.querySelectorAll('.scroll-animate');
 
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.addEventListener('click', () => {
-                    navToggle.classList.remove('active');
-                    navMenu.classList.remove('active');
-                });
+        this.scrollObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    this.scrollObserver.unobserve(entry.target);
+                }
             });
-        }
+        }, {
+            threshold: 0.1
+        });
 
-        const themeToggle = document.getElementById('theme-toggle');
-        if (themeToggle) {
-            themeToggle.addEventListener('click', () => {
-                this.toggleTheme();
-            });
-        }
-
-        const scrollArrow = document.querySelector('.scroll-arrow');
-        if (scrollArrow) {
-            scrollArrow.addEventListener('click', () => {
-                document.getElementById('about').scrollIntoView({ 
-                    behavior: 'smooth' 
-                });
-            });
-        }
-
-        window.addEventListener('resize', this.handleResize.bind(this));
-        window.addEventListener('scroll', this.handleScroll.bind(this));
+        animatedElements.forEach(el => {
+            this.scrollObserver.observe(el);
+        });
     }
 
     initNavbar() {
@@ -57,6 +37,7 @@ class PortfolioApp {
         
         window.addEventListener('scroll', () => {
             let current = '';
+            // Corrected to find sections by ID (which template.html has)
             const sections = document.querySelectorAll('section[id]');
             
             sections.forEach(section => {
@@ -71,6 +52,7 @@ class PortfolioApp {
 
             navLinks.forEach(link => {
                 link.classList.remove('active');
+                // Check if the link's href matches the current section's ID
                 if (link.getAttribute('href') === `#${current}`) {
                     link.classList.add('active');
                 }
@@ -147,16 +129,17 @@ class PortfolioApp {
         const projectsHTML = repos.map(repo => this.createProjectCard(repo)).join('');
         projectsGrid.innerHTML = projectsHTML;
 
-        // Add fade-in animation
-        setTimeout(() => {
-            document.querySelectorAll('.project-card').forEach((card, index) => {
-                setTimeout(() => {
-                    card.classList.add('fade-in');
-                }, index * 100);
+        // Re-run scroll animations on the new elements
+        if (this.scrollObserver) {
+            projectsGrid.querySelectorAll('.scroll-animate').forEach(el => {
+                this.scrollObserver.observe(el);
             });
-        }, 100);
+        }
     }
 
+    /**
+     * UPDATED to match the new comic-panel style
+     */
     createProjectCard(repo) {
         const languageColors = {
             'JavaScript': '#f7df1e',
@@ -169,59 +152,56 @@ class PortfolioApp {
             'React': '#61dafb',
             'PHP': '#777bb4',
             'C++': '#00599c',
+            'C': '#a8b9cc',
             'Go': '#00add8',
             'Rust': '#000000',
             'Swift': '#fa7343',
             'Kotlin': '#7f52ff'
         };
 
-        const languageColor = languageColors[repo.language] || '#6b7280';
-        const status = repo.status || 'completed';
+        const language = repo.language || 'Other';
+        const languageColor = languageColors[language] || '#6b7280';
+        
+        const status = repo.status || 'completed'; // Assuming your API provides this
         const statusIcon = status === 'completed' ? 'fas fa-check-circle' : 'fas fa-clock';
         const statusColor = status === 'completed' ? '#10b981' : '#f59e0b';
+        const statusText = status === 'completed' ? 'Completed' : 'Under Dev';
+
+        // Add random rotation like in the template
+        const rotations = ['-rotate-2', 'rotate-1', '-rotate-1', 'rotate-2'];
+        const rotation = rotations[Math.floor(Math.random() * rotations.length)];
 
         return `
-            <div class="project-card">
-                <div class="project-header">
-                    <h3 class="project-title">${repo.name}</h3>
-                    <div class="project-stats">
-                        <span title="Stars"><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
-                        <span title="Forks"><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
-                    </div>
-                </div>
-                <p class="project-description">${repo.description}</p>
-                <div class="project-tech">
-                    <span class="tech-tag" style="border-color: ${languageColor}; color: ${languageColor}">
-                        ${repo.language}
+            <div class="comic-panel p-6 transform ${rotation} scroll-animate">
+                <h3 class="text-3xl mb-2">${repo.name}</h3>
+                <p class="mb-4">${repo.description || 'No description available.'}</p>
+                <div class="project-tech mb-4 flex flex-wrap gap-2">
+                    <span class="tech-tag" style="border-color:${languageColor}; color:${languageColor};">
+                        ${language}
                     </span>
-                    ${repo.topics.slice(0, 3).map(topic => 
-                        `<span class="tech-tag">${topic}</span>`
+                    ${repo.topics.slice(0, 2).map(topic => 
+                        `<span class="tech-tag" style="border-color:#6b7280; color:#6b7280;">${topic}</span>`
                     ).join('')}
                 </div>
-                <div class="project-links">
-                    <a href="${repo.html_url}" target="_blank" class="project-link">
-                        <i class="fab fa-github"></i>
-                        <span>View Code</span>
-                    </a>
-                    <span class="project-status" style="color: ${statusColor}">
-                        <i class="${statusIcon}"></i>
-                        ${status === 'completed' ? 'Completed' : 'Under Dev'}
-                    </span>
-                </div>
+                <a href="${repo.html_url}" target="_blank" class="action-button action-button-blue">Source Code</a>
+                <span class="project-status ml-4" style="color:${statusColor}; font-family: 'Bangers', cursive; font-size: 1.25rem; letter-spacing: 0.05em;">
+                    <i class="${statusIcon}"></i> ${statusText}
+                </span>
             </div>
         `;
     }
 
+    /**
+     * UPDATED to match the new comic-panel style
+     */
     showProjectError(message) {
         const projectsGrid = document.getElementById('projects-grid');
         console.log('Showing project error:', message);
         projectsGrid.innerHTML = `
-            <div class="project-error">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Unable to Load Projects</h3>
-                <p>${message}</p>
-                <a href="https://github.com/jatinnirwann" target="_blank" class="btn btn-primary">
-                    <i class="fab fa-github"></i>
+            <div class="comic-panel p-8 text-black text-center" style="grid-column: 1 / -1; transform: rotate(-1deg);">
+                <h3 class="text-4xl mb-4 text-red-500">WHOOPS!</h3>
+                <p class="text-lg mb-6">Unable to Load Missions: ${message}</p>
+                <a href="https://github.com/jatinnirwann" target="_blank" class="action-button">
                     Visit GitHub Profile
                 </a>
             </div>
@@ -270,161 +250,11 @@ class PortfolioApp {
             console.error('Error during auto-refresh:', error);
         }
     }
-
-    handleScroll() {
-        const navbar = document.getElementById('navbar');
-        const scrollY = window.scrollY;
-        
-        // Add scrolled class to navbar
-        if (scrollY > 100) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    }
-
-    handleResize() {
-        const navToggle = document.getElementById('nav-toggle');
-        const navMenu = document.getElementById('nav-menu');
-        
-        if (window.innerWidth > 768) {
-            navToggle?.classList.remove('active');
-            navMenu?.classList.remove('active');
-        }
-    }
-
-    async testAPI() {
-        console.log('Testing API manually...');
-        try {
-            const response = await fetch('/api/github-repos');
-            const data = await response.json();
-            console.log('Manual API test result:', data);
-            return data;
-        } catch (error) {
-            console.error('Manual API test failed:', error);
-            return null;
-        }
-    }
-
-    initThemeToggle() {
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        this.setTheme(savedTheme);
-    }
-
-    toggleTheme() {
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
-        this.setTheme(newTheme);
-    }
-
-    setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem('theme', theme);
-        
-        const themeIcon = document.getElementById('theme-icon');
-        if (themeIcon) {
-            themeIcon.className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
-        }
-        
-        console.log(`Theme switched to: ${theme}`);
-    }
-
-    initInteractiveIllustrations() {
-        const heroSection = document.querySelector('.hero');
-        const floatingIcons = document.querySelectorAll('.floating-icon');
-        const mouseFollower = document.getElementById('mouseFollower');
-        const mouseTrails = [
-            document.getElementById('mouseTrail1'),
-            document.getElementById('mouseTrail2'),
-            document.getElementById('mouseTrail3')
-        ];
-
-        if (!heroSection || !mouseFollower) return;
-
-        let mouseX = 0;
-        let mouseY = 0;
-        let trailPositions = [
-            { x: 0, y: 0 },
-            { x: 0, y: 0 },
-            { x: 0, y: 0 }
-        ];
-
-        heroSection.addEventListener('mousemove', (e) => {
-            const rect = heroSection.getBoundingClientRect();
-            mouseX = e.clientX - rect.left;
-            mouseY = e.clientY - rect.top;
-
-            mouseFollower.style.transform = `translate(${mouseX - 10}px, ${mouseY - 10}px)`;
-
-            floatingIcons.forEach(icon => {
-                const iconRect = icon.getBoundingClientRect();
-                const heroRect = heroSection.getBoundingClientRect();
-                const iconX = iconRect.left - heroRect.left + iconRect.width / 2;
-                const iconY = iconRect.top - heroRect.top + iconRect.height / 2;
-                
-                const distance = Math.sqrt(
-                    Math.pow(mouseX - iconX, 2) + Math.pow(mouseY - iconY, 2)
-                );
-
-                if (distance < 150) {
-                    icon.classList.add('mouse-nearby');
-                    const repelX = (mouseX - iconX) * -0.3;
-                    const repelY = (mouseY - iconY) * -0.3;
-                    icon.style.transform = `translate(${repelX}px, ${repelY}px) scale(1.1)`;
-                } else {
-                    icon.classList.remove('mouse-nearby');
-                    icon.style.transform = '';
-                }
-            });
-        });
-
-        const animateTrails = () => {
-            trailPositions[0].x += (mouseX - trailPositions[0].x) * 0.2;
-            trailPositions[0].y += (mouseY - trailPositions[0].y) * 0.2;
-            
-            trailPositions[1].x += (trailPositions[0].x - trailPositions[1].x) * 0.15;
-            trailPositions[1].y += (trailPositions[0].y - trailPositions[1].y) * 0.15;
-            
-            trailPositions[2].x += (trailPositions[1].x - trailPositions[2].x) * 0.1;
-            trailPositions[2].y += (trailPositions[1].y - trailPositions[2].y) * 0.1;
-
-            mouseTrails.forEach((trail, index) => {
-                if (trail) {
-                    trail.style.transform = `translate(${trailPositions[index].x - 4}px, ${trailPositions[index].y - 4}px)`;
-                }
-            });
-
-            requestAnimationFrame(animateTrails);
-        };
-
-        animateTrails();
-
-        heroSection.addEventListener('mouseleave', () => {
-            mouseFollower.style.opacity = '0';
-            mouseTrails.forEach(trail => {
-                if (trail) trail.style.opacity = '0';
-            });
-            floatingIcons.forEach(icon => {
-                icon.classList.remove('mouse-nearby');
-                icon.style.transform = '';
-            });
-        });
-
-        heroSection.addEventListener('mouseenter', () => {
-            mouseFollower.style.opacity = '0.15';
-            mouseTrails.forEach(trail => {
-                if (trail) trail.style.opacity = '0.1';
-            });
-        });
-    }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing portfolio app...');
     window.portfolioApp = new PortfolioApp();
-    
-    window.testAPI = () => window.portfolioApp.testAPI();
-    window.reloadProjects = () => window.portfolioApp.loadGitHubProjects();
 });
 
 window.addEventListener('unhandledrejection', event => {
