@@ -4,7 +4,11 @@ import os
 import json
 from datetime import datetime, timedelta
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='dist', static_url_path='')
+
+@app.route('/')
+def index():
+    return app.send_static_file('index.html')
 
 def load_ignored_repos():
     ignored_repos = set()
@@ -16,9 +20,6 @@ def load_ignored_repos():
                     if line and not line.startswith('#'):
                         ignored_repos.add(line.lower())
             print(f"Loaded {len(ignored_repos)} ignored repositories")
-        else:
-            print("ignored_repos.txt not found, no repositories will be ignored")
-        return ignored_repos
     except Exception as e:
         print(f"Error loading ignored repos: {e}")
         return set()
@@ -161,9 +162,7 @@ def fetch_github_repos():
         print(f"Error fetching GitHub repos: {e}")
         return []
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+
 
 @app.route('/api/github-repos')
 def get_github_repos():
@@ -178,8 +177,6 @@ def get_github_repos():
                 repo for repo in cached_repos 
                 if repo['name'].lower() not in ignored_repos
             ]
-            print(f"Filtered {len(cached_repos)} cached repos to {len(filtered_repos)}")
-            
             return jsonify({
                 'success': True,
                 'repos': filtered_repos,
@@ -199,6 +196,18 @@ def get_github_repos():
                     'success': True,
                     'repos': repos,
                     'source': 'github_api'
+                })
+            elif cached_repos:
+                print("Failed to fetch fresh repos, falling back to stale cache")
+                ignored_repos = load_ignored_repos()
+                filtered_repos = [
+                    repo for repo in cached_repos 
+                    if repo['name'].lower() not in ignored_repos
+                ]
+                return jsonify({
+                    'success': True,
+                    'repos': filtered_repos,
+                    'source': 'cache_stale'
                 })
             else:
                 return jsonify({

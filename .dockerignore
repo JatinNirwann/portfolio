@@ -1,10 +1,8 @@
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-.env
-.git/
+node_modules
+venv
+__pycache__
+.git
 .gitignore
 .dockerignore
-README.md
-*.log
+dist
+*.pyc
