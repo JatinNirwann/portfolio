@@ -19,6 +19,16 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
+# Load .env variables if available
+if [ -f .env ]; then
+    echo ">>> Loading Environment Variables from .env..."
+    set -o allexport
+    source .env
+    set +o allexport
+else
+    echo ">>> Warning: .env file not found. Systemd service will not have email credentials configured."
+fi
+
 # 2. Build Docker Image
 echo ">>> Restarting Docker service to ensure clean state..."
 systemctl restart docker
@@ -39,7 +49,14 @@ Requires=docker.service
 
 [Service]
 Restart=always
-ExecStart=/usr/bin/docker run --rm --name ${SERVICE_NAME} -p ${PORT}:5000 ${IMAGE_NAME}
+Environment="SMTP_EMAIL=${SMTP_EMAIL}"
+Environment="SMTP_PASSWORD=${SMTP_PASSWORD}"
+Environment="RECIPIENT_EMAIL=${RECIPIENT_EMAIL}"
+ExecStart=/usr/bin/docker run --rm --name ${SERVICE_NAME} -p ${PORT}:5000 \
+    -e SMTP_EMAIL=\${SMTP_EMAIL} \
+    -e SMTP_PASSWORD=\${SMTP_PASSWORD} \
+    -e RECIPIENT_EMAIL=\${RECIPIENT_EMAIL} \
+    ${IMAGE_NAME}
 ExecStop=/usr/bin/docker stop ${SERVICE_NAME}
 
 [Install]

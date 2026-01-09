@@ -222,30 +222,114 @@ def get_github_repos():
             'message': str(e)
         }), 500
 
-@app.route('/api/refresh-repos', methods=['POST'])
-def refresh_repos():
-    try:
-        print("Force refreshing repositories from GitHub API")
-        repos = fetch_github_repos()
-        
-        if repos:
-            save_repos_to_file(repos)
-            return jsonify({
-                'success': True,
-                'repos': repos,
-                'message': 'Repositories refreshed successfully'
-            })
-        else:
-            return jsonify({
-                'success': False,
-                'error': 'Failed to fetch repositories'
-            }), 500
-            
     except Exception as e:
         return jsonify({
             'success': False,
             'error': 'Internal server error',
             'message': str(e)
+        }), 500
+
+@app.route('/api/contact', methods=['POST'])
+def send_contact_email():
+    try:
+        data = request.json
+        name = data.get('name')
+        visitor_email = data.get('email')
+        message = data.get('message')
+
+        if not all([name, visitor_email, message]):
+            return jsonify({'success': False, 'error': 'Missing required fields'}), 400
+
+        # Email Configuration
+        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(os.environ.get('SMTP_PORT', 587))
+        smtp_email = os.environ.get('SMTP_EMAIL')
+        smtp_password = os.environ.get('SMTP_PASSWORD')
+        recipient_email = os.environ.get('RECIPIENT_EMAIL', 'jatinbuilds@outlook.com') # Default fallback
+
+        if not smtp_email or not smtp_password:
+            # Fallback path if no credentials configured: log to file
+            print("WARNING: SMTP credentials not set. Logging message to file instead.")
+            log_entry = {
+                'timestamp': datetime.now().isoformat(),
+                'name': name,
+                'email': visitor_email,
+                'message': message
+            }
+            with open('messages.json', 'a') as f:
+                f.write(json.dumps(log_entry) + '\n')
+            
+            return jsonify({
+                'success': True, 
+                'message': 'Message received (logged mode)'
+            })
+
+        # Send Email via SMTP
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        msg = MIMEMultipart()
+        msg['From'] = smtp_email
+        msg['To'] = recipient_email
+        msg['Subject'] = f"New Signal from {name} (Portfolio)"
+        msg['Reply-To'] = visitor_email
+
+        body = f"""
+        New Contact Form Submission:
+        
+        Name: {name}
+        Email: {visitor_email}
+        
+        Message:
+        {message}
+        """
+        msg.attach(MIMEText(body, 'plain'))
+
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(smtp_email, smtp_password)
+        text = msg.as_string()
+        server.sendmail(smtp_email, recipient_email, text)
+
+        # ---------------------------------------------------------
+        # Send Auto-Reply to Visitor
+        # ---------------------------------------------------------
+        try:
+            reply_msg = MIMEMultipart()
+            reply_msg['From'] = smtp_email
+            reply_msg['To'] = visitor_email
+            reply_msg['Subject'] = f"Signal Received: Thanks for connecting, {name}!"
+
+            reply_body = f"""
+            Hi {name},
+
+            Thank you for reaching out! I've securely received your message from my portfolio.
+
+            This is an automated confirmation to let you know I'll be reviewing it shortly. 
+            If your inquiry requires a response, I'll get back to you as soon as possible.
+
+            Best regards,
+            Jatin Nirwann
+            jatinbuilds@outlook.com
+            """
+            reply_msg.attach(MIMEText(reply_body, 'plain'))
+            server.sendmail(smtp_email, visitor_email, reply_msg.as_string())
+            print(f"Auto-reply sent to {visitor_email}")
+        except Exception as reply_error:
+            # Don't fail the main request if auto-reply fails, just log it
+            print(f"Failed to send auto-reply: {reply_error}")
+
+        server.quit()
+
+        return jsonify({'success': True, 'message': 'Signal transmitted successfully'})
+
+    except Exception as e:
+        print(f"Error sending email: {e}")
+        return jsonify({
+            'success': False, 
+            'error': 'Failed to transmit signal',
+            'details': str(e)
         }), 500
 
 if __name__ == '__main__':
