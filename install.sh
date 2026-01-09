@@ -31,8 +31,6 @@ sleep 5
 DOCKER_BUILDKIT=0 docker build --no-cache -t ${IMAGE_NAME} .
 
 cat <<EOF > /etc/systemd/system/${SERVICE_NAME}.service
-
-cat <<EOF > /etc/systemd/system/${SERVICE_NAME}.service
 [Unit]
 Description=Portfolio App Docker Container
 After=docker.service
@@ -52,8 +50,6 @@ ExecStop=/usr/bin/docker stop ${SERVICE_NAME}
 
 [Install]
 WantedBy=multi-user.target
-EOF
-
 EOF
 
 systemctl daemon-reload
