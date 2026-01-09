@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir flask requests
 # Copy built assets from build stage
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/app.py .
-COPY --from=build /app/repo.txt .
+
 COPY --from=build /app/ignored_repos.txt .
 
 # Expose port
