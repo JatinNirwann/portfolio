@@ -12,34 +12,25 @@ PORT=5000
 
 echo ">>> Starting Installation..."
 
-# 1. Check for Docker
+echo ">>> Starting Installation..."
+
 if ! command -v docker &> /dev/null; then
     echo "Docker could not be found. Please install Docker first."
-    echo "Try: curl -sSL https://get.docker.com | sh"
     exit 1
 fi
 
-# Load .env variables if available
 if [ -f .env ]; then
-    echo ">>> Loading Environment Variables from .env..."
     set -o allexport
     source .env
     set +o allexport
-else
-    echo ">>> Warning: .env file not found. Systemd service will not have email credentials configured."
 fi
 
-# 2. Build Docker Image
-echo ">>> Restarting Docker service to ensure clean state..."
 systemctl restart docker
 sleep 5
 
-echo ">>> Building Docker image ${IMAGE_NAME}..."
-# Using DOCKER_BUILDKIT=0 and --no-cache to bypass potential overlayfs/snapshotter issues on Pi
 DOCKER_BUILDKIT=0 docker build --no-cache -t ${IMAGE_NAME} .
 
-# 3. Create Systemd Service
-echo ">>> Creating Systemd Service /etc/systemd/system/${SERVICE_NAME}.service..."
+cat <<EOF > /etc/systemd/system/${SERVICE_NAME}.service
 
 cat <<EOF > /etc/systemd/system/${SERVICE_NAME}.service
 [Unit]
@@ -63,8 +54,8 @@ ExecStop=/usr/bin/docker stop ${SERVICE_NAME}
 WantedBy=multi-user.target
 EOF
 
-# 4. Enable and Start Service
-echo ">>> Enabling and Starting Service..."
+EOF
+
 systemctl daemon-reload
 systemctl enable ${SERVICE_NAME}
 systemctl start ${SERVICE_NAME}

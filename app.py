@@ -241,11 +241,17 @@ def send_contact_email():
             return jsonify({'success': False, 'error': 'Missing required fields'}), 400
 
         # Email Configuration
-        smtp_server = os.environ.get('SMTP_SERVER', 'smtp.gmail.com')
-        smtp_port = int(os.environ.get('SMTP_PORT', 587))
-        smtp_email = os.environ.get('SMTP_EMAIL')
-        smtp_password = os.environ.get('SMTP_PASSWORD')
-        recipient_email = os.environ.get('RECIPIENT_EMAIL', 'jatinbuilds@outlook.com') # Default fallback
+        def get_clean_env(key, default=None):
+            val = os.environ.get(key)
+            if val:
+                return val.strip().strip("'").strip('"')
+            return default
+
+        smtp_server = get_clean_env('SMTP_SERVER', 'smtp.gmail.com')
+        smtp_port = int(get_clean_env('SMTP_PORT', 587))
+        smtp_email = get_clean_env('SMTP_EMAIL')
+        smtp_password = get_clean_env('SMTP_PASSWORD')
+        recipient_email = get_clean_env('RECIPIENT_EMAIL', 'jatinbuilds@outlook.com')
 
         if not smtp_email or not smtp_password:
             # Fallback path if no credentials configured: log to file
@@ -292,9 +298,7 @@ def send_contact_email():
         text = msg.as_string()
         server.sendmail(smtp_email, recipient_email, text)
 
-        # ---------------------------------------------------------
         # Send Auto-Reply to Visitor
-        # ---------------------------------------------------------
         try:
             reply_msg = MIMEMultipart()
             reply_msg['From'] = smtp_email
