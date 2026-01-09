@@ -1,5 +1,5 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:18-alpine AS build
 WORKDIR /app
 COPY package*.json ./
 RUN npm ci
@@ -17,9 +17,9 @@ RUN pip install --no-cache-dir flask requests
 
 # Copy built assets from build stage
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/app.py .
+COPY app.py .
 
-COPY --from=build /app/ignored_repos.txt .
+COPY ignored_repos.txt .
 
 # Expose port
 EXPOSE 5000

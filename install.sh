@@ -20,8 +20,13 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # 2. Build Docker Image
+echo ">>> Restarting Docker service to ensure clean state..."
+systemctl restart docker
+sleep 5
+
 echo ">>> Building Docker image ${IMAGE_NAME}..."
-docker build -t ${IMAGE_NAME} .
+# Using DOCKER_BUILDKIT=0 and --no-cache to bypass potential overlayfs/snapshotter issues on Pi
+DOCKER_BUILDKIT=0 docker build --no-cache -t ${IMAGE_NAME} .
 
 # 3. Create Systemd Service
 echo ">>> Creating Systemd Service /etc/systemd/system/${SERVICE_NAME}.service..."
